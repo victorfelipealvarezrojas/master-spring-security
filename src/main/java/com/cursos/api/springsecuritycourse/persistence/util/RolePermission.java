@@ -1,0 +1,15 @@
+package com.cursos.api.springsecuritycourse.persistence.util;
+
+public enum RolePermission {
+    READ_ALL_PRODUCTS,
+    READ_ONE_PRODUCTS,
+    CREATE_ONE_PRODUCTS,
+    UPDATE_ONE_PRODUCTS,
+    DISABLE_ONE_PRODUCTS,
+    READ_ALL_CATEGORIES,
+    READ_ONE_CATEGORIES,
+    CREATE_ONE_CATEGORIES,
+    UPDATE_ONE_CATEGORIES,
+    DISABLE_ONE_CATEGORIES,
+    READ_MY_PROFILE;
+}
