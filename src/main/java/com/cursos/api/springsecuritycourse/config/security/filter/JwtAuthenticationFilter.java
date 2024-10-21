@@ -28,6 +28,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private UserService userService;
 
+    /**
+     * Este metodo se ejecuta por cada request que llega al servidor
+     * y s eencarga de validar el token y setear el objeto Authentication
+     * en el SecurityContextHolder y es parte del proceso de autenticacion
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //1. Obtener Headers http Authorization
@@ -42,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         //3. Obtener el subject/username desde el token, validar token
         String username = jwtService.extractUsername(jwt);
 
-        //4. seterar obj Authentication dentro del security context holder
+        //4. setea obj Authentication dentro del security context holder
         User userDetails = userService.findByUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
