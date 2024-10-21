@@ -1,7 +1,7 @@
 package com.cursos.api.springsecuritycourse.service.auth;
 
 import com.cursos.api.springsecuritycourse.dto.RegisteredUser;
-import com.cursos.api.springsecuritycourse.dto.UserDto;
+import com.cursos.api.springsecuritycourse.dto.SaveUser;
 import com.cursos.api.springsecuritycourse.dto.auth.AuthRequest;
 import com.cursos.api.springsecuritycourse.dto.auth.AuthResponse;
 import com.cursos.api.springsecuritycourse.exception.ObjectNotFoundException;
@@ -30,7 +30,7 @@ public class AuthenticationService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public RegisteredUser registerCustomer(UserDto newUser) {
+    public RegisteredUser registerCustomer(SaveUser newUser) {
         User user = userService.registerCustomer(newUser);
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(user.getId());
@@ -45,12 +45,13 @@ public class AuthenticationService {
     }
 
     public AuthResponse login(AuthRequest authRequest) {
+
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                authRequest.getUsername(),
-                authRequest.getPassword()
+                authRequest.getUsername(), authRequest.getPassword()
         );
+
         // busca un proveedor que resulva UsernamePasswordAuthenticationToken y
-        // DaoAuthenticationProvider que configure en SecurityBeansInjector lo resuelve que ademas se configuro
+        // DaoAuthenticationProvider que configure en SecurityBeansInjector lo resuelve., que ademas se configuro
         // en httpSecurityConfig
         this.authenticationManager.authenticate(authentication); // si no se encuentra autenticado lanza un throw
 

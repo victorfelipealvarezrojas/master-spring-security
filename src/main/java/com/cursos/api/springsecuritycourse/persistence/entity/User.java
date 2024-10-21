@@ -15,10 +15,14 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(unique = true)
     private String username;
+
     private String name;
+
     private String password;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -32,7 +36,7 @@ public class User implements UserDetails {
 
         return role.getPermissions().stream()
                 .map(permission -> permission.name())
-                .map(SimpleGrantedAuthority::new)
+                .map(SimpleGrantedAuthority::new) // convierto a objeto de tipo GrantedAuthority
                 .collect(Collectors.toList());
     }
 

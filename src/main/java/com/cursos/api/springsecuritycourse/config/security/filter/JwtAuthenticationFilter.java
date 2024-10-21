@@ -1,8 +1,5 @@
 package com.cursos.api.springsecuritycourse.config.security.filter;
 
-
-// import org.springframework.web.filter.GenericFilterBean; implementa  ddFilterBefore + jakarta.servlet.filter
-
 import com.cursos.api.springsecuritycourse.persistence.entity.User;
 import com.cursos.api.springsecuritycourse.service.UserService;
 import com.cursos.api.springsecuritycourse.service.auth.JwtService;

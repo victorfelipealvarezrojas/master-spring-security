@@ -1,7 +1,7 @@
 package com.cursos.api.springsecuritycourse.controller;
 
 import com.cursos.api.springsecuritycourse.dto.RegisteredUser;
-import com.cursos.api.springsecuritycourse.dto.UserDto;
+import com.cursos.api.springsecuritycourse.dto.SaveUser;
 import com.cursos.api.springsecuritycourse.service.auth.AuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +20,8 @@ public class CustomerController {
     private AuthenticationService authenticationService;
 
     @PostMapping
-    public ResponseEntity<RegisteredUser>  registerCustomer(@Valid @RequestBody UserDto userDto){
-        RegisteredUser registeredUser = authenticationService.registerCustomer(userDto);
+    public ResponseEntity<RegisteredUser>  registerCustomer(@Valid @RequestBody SaveUser saveUser){
+        RegisteredUser registeredUser = authenticationService.registerCustomer(saveUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
     }
 }

@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
 
-public class UserDto implements Serializable {
+public class SaveUser implements Serializable {
 
     @Size(min = 4)
     private String name;

@@ -13,7 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity // arranca la creacion de componentes de s.security (AuthConfiguration, authEntryPoint(respuesta))
+@EnableWebSecurity // habilita la seguridad web
 public class HttpSecurityConfig {
 
     @Autowired

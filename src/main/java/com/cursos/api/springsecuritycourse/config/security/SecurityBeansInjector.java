@@ -2,6 +2,7 @@ package com.cursos.api.springsecuritycourse.config.security;
 
 import com.cursos.api.springsecuritycourse.exception.ObjectNotFoundException;
 import com.cursos.api.springsecuritycourse.persistence.repository.UserRepository;
+import com.cursos.api.springsecuritycourse.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,51 +13,70 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Configuration // me permite usar los beans
+@Configuration
 public class SecurityBeansInjector {
 
     @Autowired
-    private UserRepository userRepository; // podria haber creado un servicio pero no
+    private UserRepository userRepository;
 
-    // me permite construir el AuthenticationManager y es proveida e inyectada por spring security
-    // Autowired
-    //  AuthenticationConfiguration _authenticationConfiguration
+    @Autowired
+    private UserService userService;
 
-    // tipo de implementacion del AuthenticationManager basica,
-    // es el encargado de realizar la autenticacion
-    // authenticationManager( AuthenticationConfiguration authenticationConfiguration ) otra forma y elimino @Autowired
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
+
+    @Autowired
+    AuthenticationConfiguration authenticationConfiguration;
+
+    /**
+     * @AuthenticationManager       :: responsable de procesar solicitudes de autenticación.
+     *
+     * @AuthrnticationConfiguration :: proporciona un AuthenticationManager.
+     *                                 y permite acceder a la configuración de autenticación.
+     */
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        //devulevo implementacion predeterminada
-        //solo tiene un metodo authenticate (solo tiene el "Principal y password" al momento de intentar autenticarse),
-        // y les aplicara una estrategia
-        return authenticationConfiguration.getAuthenticationManager(); // implementacion mas comun
+    public AuthenticationManager authenticationManager() throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
-    // tipo de autenticacion
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        System.out.println("authenticationProvider::::call");
-        // estrategia de autenticacion
-        // DaoAuthenticationProvider se extiende de AuthenticationProvider(estrategia)
-        DaoAuthenticationProvider authenticationStrategy = new DaoAuthenticationProvider();
-        authenticationStrategy.setPasswordEncoder(passwordEncoder());
-        authenticationStrategy.setUserDetailsService(userDetailsService());
-        // aqui la estrategia tiene todos sus mecanismos para el proceso
-        return authenticationStrategy;
-    }
-
-    // esta interface permite codificar, comparar password
+    /* esta interface permite codificar, comparar password pero varias clases lo usan por defecto
+    para evitar dependencias circulares, se puede inyectar en la clase que lo necesite y manejar el beans de
+    PasswordEncoderConfig en esta clase
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }*/
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        System.out.println("authenticationProvider::::call");
+        DaoAuthenticationProvider authenticationStrategy = new DaoAuthenticationProvider();
+        authenticationStrategy.setPasswordEncoder(passwordEncoder);
+        // impl desde UserServiceImpl manteniendo el nombre loadUserByUsername por defecto
+        authenticationStrategy.setUserDetailsService(userService);
+        // impl desde esta misma clase modificando el nombre del metodo de loadUserByUsername a userDetailsService
+        // authenticationStrategy.setUserDetailsService(userDetailsService());
+        return authenticationStrategy;
     }
 
-    // esta relacionado con UserServiceImpl que implementa esta misma interface
+    /*******************************************************************************************
+     * @UserDetailsService :: es una interface tiene un metodo llamado loadUserByUsername
+     * @loadUserByUsername :: es un metodo que permite cargar un usuario basado en su nombre
+     * *****************************************************************************************
+     * la implementacion que sigue es una forma de implementar la interface UserDetailsService
+     * el cual permite sobre escribir el metodo loadUserByUsername y ademas cambiar el nombre de
+     * loadUserByUsername a userDetailsService o como quiera llamarle.
+     * ...preferi implementar en la capa de servicio y extender de UserDetailsService
+     * y sobre escribir el metodo loadUserByUsername en ella, y esto es una alternativa
+     * que solo me permite tener mas control sobre el nombre que da por defecto spring security
+     *****************************************************************************************
+     * *****************************************************************************************
+     */
+    @Deprecated
     public UserDetailsService userDetailsServiceV2() {
         // utilizo una expresion lambda, si devolviera una instancia tendria que anotarlo como @beans
         return (username) -> {
@@ -65,6 +85,10 @@ public class SecurityBeansInjector {
         };
     }
 
+    // otra opcion es impelmentarla en la capa de userServiceImpl y extender de UserDetailsService
+    // y sobre escribir el metodo loadUserByUsername, pero esto me permite implementar mi propio
+    // nombre de metodo
+    @Deprecated
     public UserDetailsService userDetailsService() {
         return new UserDetailsService() {
             @Override
@@ -72,7 +96,7 @@ public class SecurityBeansInjector {
                 // username se obtiene de la solicitud
                 return userRepository.findByUsername(username)
                         .orElseThrow(() -> new ObjectNotFoundException("User not found with username " + username));
-            };
+            }
         };
     }
 }
