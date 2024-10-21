@@ -12,7 +12,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.Map;
 
-@Servicecls
+@Service
 public class JwtService {
     @Value("${security.jwt.expiration-in-minutes}")
     private Long EXPIRATION_IN_MINUTES;
