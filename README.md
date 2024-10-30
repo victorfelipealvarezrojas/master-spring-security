@@ -76,15 +76,15 @@ El diagrama muestra la configuración principal de Spring Security con los sigui
 ```mermaid
 graph TD
     subgraph "JWT Authentication Filter Flow"
-        JAF2["JwtAuthenticationFilter<br/>@Component"]
+        JAF2["JwtAuthenticationFilter @Component"]
         
         subgraph "Filter Process"
             REQ[/"Incoming HTTP Request"/]
-            HEAD["1. Extract Bearer Token<br/>from Authorization Header"]
+            HEAD["1. Extract Bearer Token"]
             TOKEN["2. Parse JWT Token"]
-            USER["3. Extract Username<br/>from Token"]
-            VALID["4. Find & Validate User"]
-            AUTH2["5. Create Authentication Object"]
+            USER["3. Extract Username"]
+            VALID["4. Find and Validate User"]
+            AUTH2["5. Create Authentication"]
             CTX["6. Set Security Context"]
             NEXT["7. Continue Filter Chain"]
         end
