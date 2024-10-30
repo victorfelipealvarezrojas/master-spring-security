@@ -80,13 +80,13 @@ graph TD
         
         subgraph "Filter Process"
             REQ[/"Incoming HTTP Request"/]
-            HEAD["1. Extract Bearer Token"]
-            TOKEN["2. Parse JWT Token"]
-            USER["3. Extract Username"]
-            VALID["4. Find and Validate User"]
-            AUTH2["5. Create Authentication"]
-            CTX["6. Set Security Context"]
-            NEXT["7. Continue Filter Chain"]
+            HEAD["A. Extract Bearer Token"]
+            TOKEN["B. Parse JWT Token"]
+            USER["C. Extract Username"]
+            VALID["D. Find and Validate User"]
+            AUTH2["E. Create Authentication"]
+            CTX["F. Set Security Context"]
+            NEXT["G. Continue Filter Chain"]
         end
     end
     
@@ -115,13 +115,13 @@ graph TD
 - **JwtAuthenticationFilter**: Filtro que procesa y valida los tokens JWT
 
 ### Proceso de Filtrado
-1. **Recepción de Request**: Intercepta la petición HTTP entrante
-2. **Extracción de Token**: Obtiene el token Bearer del header Authorization
-3. **Parsing de JWT**: Procesa el token JWT
-4. **Extracción de Username**: Obtiene el username del token
-5. **Validación de Usuario**: Busca y valida el usuario en el sistema
-6. **Creación de Autenticación**: Genera el objeto de autenticación
-7. **Configuración de Contexto**: Establece la autenticación en el SecurityContext
+A. **Recepción de Request**: Intercepta la petición HTTP entrante
+B. **Extracción de Token**: Obtiene el token Bearer del header Authorization
+C. **Parsing de JWT**: Procesa el token JWT
+D. **Extracción de Username**: Obtiene el username del token
+E. **Validación de Usuario**: Busca y valida el usuario en el sistema
+F. **Creación de Autenticación**: Genera el objeto de autenticación
+G. **Configuración de Contexto**: Establece la autenticación en el SecurityContext
 
 ### Servicios Relacionados
 - **JwtService**: Manejo y procesamiento de tokens JWT
