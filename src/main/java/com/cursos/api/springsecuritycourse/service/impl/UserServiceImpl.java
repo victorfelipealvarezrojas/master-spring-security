@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private PasswordEncoder passwordEncoder;
 
     /**
+     * extends to UserService
      * Registra un nuevo usuario cliente en el sistema.
      *
      * @param newUser El DTO que contiene la información del nuevo usuario.
@@ -49,6 +50,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     /**
+     * extends to UserService
      * Busca un usuario por su nombre de usuario.
      *
      * @param username El nombre de usuario a buscar.
@@ -77,6 +79,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     /**
+     * extends to UserDetailsService
      * Carga los detalles del usuario para propósitos de autenticación.
      * Este método es utilizado por Spring Security para la autenticación de usuarios.
      *

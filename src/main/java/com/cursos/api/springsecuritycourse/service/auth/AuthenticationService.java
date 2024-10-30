@@ -52,10 +52,11 @@ public class AuthenticationService {
 
         // busca un proveedor que resulva UsernamePasswordAuthenticationToken y
         // DaoAuthenticationProvider que configure en SecurityBeansInjector lo resuelve., que ademas se configuro
-        // en httpSecurityConfig
-        this.authenticationManager.authenticate(authentication); // si no se encuentra autenticado lanza un throw
+        // en httpSecurityConfig y busca en la base de datos el usuario por metodo del metodo loadUserByUsername
+        // en si este es el proceso de autenticacion
+        this.authenticationManager.authenticate(authentication); // si no se encuentra el usuario lanza una excepcion
 
-        // busco detalles, la auth la realice en los pasos anteriores
+        // busco detalles, la auth la realice en el paso anterior
         UserDetails user = this.userService.findByUserName(authRequest.getUsername()).get();
         String jwt = this.jwtService.generateToken(user, generateExtraClaims((User) user));
 

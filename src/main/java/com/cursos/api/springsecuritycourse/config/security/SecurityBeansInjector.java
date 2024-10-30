@@ -15,9 +15,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * @AuthenticationManager       :: responsable de procesar solicitudes de autenticación.
+ *
+ * @AuthenticationConfiguration :: proporciona un AuthenticationManager.
+ *                                 y permite acceder a la configuración de autenticación.
+ */
 @Configuration
 public class SecurityBeansInjector {
 
+    @Deprecated(since = "la configuracion de UserDetailsService se implementa en la capa de servicio")
     @Autowired
     private UserRepository userRepository;
 
@@ -27,39 +34,32 @@ public class SecurityBeansInjector {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
-
+    /**
+     * @AuthenticationConfiguration :: proporciona un AuthenticationManager.
+                                       y permite acceder a la configuración de autenticación.
+     */
     @Autowired
     AuthenticationConfiguration authenticationConfiguration;
 
+
     /**
      * @AuthenticationManager       :: responsable de procesar solicitudes de autenticación.
-     *
-     * @AuthrnticationConfiguration :: proporciona un AuthenticationManager.
-     *                                 y permite acceder a la configuración de autenticación.
+                                       y permite acceder a la configuración de autenticación.
      */
     @Bean
     public AuthenticationManager authenticationManager() throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+        return authenticationConfiguration.getAuthenticationManager(); // obtiene el AuthenticationManager
     }
-
-    /* esta interface permite codificar, comparar password pero varias clases lo usan por defecto
-    para evitar dependencias circulares, se puede inyectar en la clase que lo necesite y manejar el beans de
-    PasswordEncoderConfig en esta clase
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }*/
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        System.out.println("authenticationProvider::::call");
         DaoAuthenticationProvider authenticationStrategy = new DaoAuthenticationProvider();
         authenticationStrategy.setPasswordEncoder(passwordEncoder);
-        // impl desde UserServiceImpl manteniendo el nombre loadUserByUsername por defecto
         authenticationStrategy.setUserDetailsService(userService);
+
         // impl desde esta misma clase modificando el nombre del metodo de loadUserByUsername a userDetailsService
         // authenticationStrategy.setUserDetailsService(userDetailsService());
+
         return authenticationStrategy;
     }
 
@@ -76,7 +76,7 @@ public class SecurityBeansInjector {
      *****************************************************************************************
      * *****************************************************************************************
      */
-    @Deprecated
+    @Deprecated(since = "la configuracion de UserDetailsService se implementa en la capa de servicio")
     public UserDetailsService userDetailsServiceV2() {
         // utilizo una expresion lambda, si devolviera una instancia tendria que anotarlo como @beans
         return (username) -> {
@@ -88,7 +88,7 @@ public class SecurityBeansInjector {
     // otra opcion es impelmentarla en la capa de userServiceImpl y extender de UserDetailsService
     // y sobre escribir el metodo loadUserByUsername, pero esto me permite implementar mi propio
     // nombre de metodo
-    @Deprecated
+    @Deprecated(since = "la configuracion de UserDetailsService se implementa en la capa de servicio")
     public UserDetailsService userDetailsService() {
         return new UserDetailsService() {
             @Override
