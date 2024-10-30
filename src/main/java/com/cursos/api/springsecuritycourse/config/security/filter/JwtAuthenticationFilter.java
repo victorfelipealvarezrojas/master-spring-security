@@ -18,7 +18,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-// OncePerRequestFilter implementa GenericFilterBean
+
+/**
+ * OncePerRequestFilter implementa GenericFilterBean
+ * por cada request que llega al servidor y se encarga de validar el token y setear
+ * el objeto Authentication en el SecurityContextHolder
+ * */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -30,17 +35,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     /**
      * Este metodo se ejecuta por cada request que llega al servidor
-     * y s eencarga de validar el token y setear el objeto Authentication
+     * y s encarga de validar el token y setear el objeto Authentication
      * en el SecurityContextHolder y es parte del proceso de autenticacion
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+
         //1. Obtener Headers http Authorization
         String authorizationHeader = request.getHeader("Authorization");
         if (!StringUtils.hasText(authorizationHeader) || !authorizationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
+
         //2. Obtener Token desde el Header
         String jwt = authorizationHeader.split(" ")[1];
 
@@ -51,6 +60,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         User userDetails = userService.findByUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+        // Crear objeto UsernamePasswordAuthenticationToken con el username, password y authorities
+        // este objeto es el que se setea en el SecurityContextHolder
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 username, null, userDetails.getAuthorities()
         );

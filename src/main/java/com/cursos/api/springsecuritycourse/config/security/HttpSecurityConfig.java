@@ -13,21 +13,20 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity // habilita la seguridad web
+@EnableWebSecurity
 public class HttpSecurityConfig {
 
     @Autowired
     private AuthenticationProvider daoAuthenticationProvider;
 
     @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter; // filtro personalizado
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(csrf -> csrf.disable())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(daoAuthenticationProvider) //cuando realice un authenticate usara esta estrategia desde login
-                // sett al securityContextHolder, es necesario para que AuthenticationService que se alimenta del holder
+                .authenticationProvider(daoAuthenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authReqConfig -> {
                     authReqConfig.requestMatchers(HttpMethod.POST,"/customers").permitAll();
