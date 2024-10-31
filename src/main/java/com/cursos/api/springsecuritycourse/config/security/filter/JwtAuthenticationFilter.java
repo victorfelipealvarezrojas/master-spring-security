@@ -56,7 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         //3. Obtener el subject/username desde el token, validar token
         String username = jwtService.extractUsername(jwt);
 
-        //4. setea obj Authentication dentro del security context holder
+        //4. setea obj Authentication dentro del security context holder, incluye el username, password y authorities
         User userDetails = userService.findByUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 

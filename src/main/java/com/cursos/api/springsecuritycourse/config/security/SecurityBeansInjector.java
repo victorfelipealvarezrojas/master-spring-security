@@ -51,11 +51,17 @@ public class SecurityBeansInjector {
         return authenticationConfiguration.getAuthenticationManager(); // obtiene el AuthenticationManager
     }
 
+    /**
+     * @AuthenticationProvider :: es una interface que permite implementar la autenticacion
+     * @DaoAuthenticationProvider :: es una implementacion de AuthenticationProvider
+     *                              que permite autenticar a los usuarios en la base de datos
+     *                              y es gestionada por el AuthenticationManager
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationStrategy = new DaoAuthenticationProvider();
         authenticationStrategy.setPasswordEncoder(passwordEncoder);
-        authenticationStrategy.setUserDetailsService(userService);
+        authenticationStrategy.setUserDetailsService(userService); // buscara el metodo loadUserByUsername en la capa de servicio
 
         // impl desde esta misma clase modificando el nombre del metodo de loadUserByUsername a userDetailsService
         // authenticationStrategy.setUserDetailsService(userDetailsService());

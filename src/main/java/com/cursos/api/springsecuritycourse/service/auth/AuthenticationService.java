@@ -53,7 +53,7 @@ public class AuthenticationService {
         // busca un proveedor que resulva UsernamePasswordAuthenticationToken y
         // DaoAuthenticationProvider que configure en SecurityBeansInjector lo resuelve., que ademas se configuro
         // en httpSecurityConfig y busca en la base de datos el usuario por metodo del metodo loadUserByUsername
-        // en si este es el proceso de autenticacion
+        // en si este es el proceso de autenticacion y compara las contraseñas
         this.authenticationManager.authenticate(authentication); // si no se encuentra el usuario lanza una excepcion
 
         // busco detalles, la auth la realice en el paso anterior
