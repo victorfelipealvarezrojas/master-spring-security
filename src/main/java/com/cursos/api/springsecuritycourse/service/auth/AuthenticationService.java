@@ -28,7 +28,7 @@ public class AuthenticationService {
     private JwtService jwtService;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager; // se inyecta el AuthenticationManager desde SecurityBeansInjector
 
     public RegisteredUser registerCustomer(SaveUser newUser) {
         User user = userService.registerCustomer(newUser);

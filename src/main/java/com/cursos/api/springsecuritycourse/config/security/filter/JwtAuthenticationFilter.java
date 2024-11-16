@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     /**
      * Este metodo se ejecuta por cada request que llega al servidor
-     * y s encarga de validar el token y setear el objeto Authentication
+     * y se encarga de validar el token y setear el objeto Authentication
      * en el SecurityContextHolder y es parte del proceso de autenticacion
      */
     @Override

@@ -34,18 +34,9 @@ public class SecurityBeansInjector {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    /**
-     * @AuthenticationConfiguration :: proporciona un AuthenticationManager.
-                                       y permite acceder a la configuración de autenticación.
-     */
     @Autowired
     AuthenticationConfiguration authenticationConfiguration;
 
-
-    /**
-     * @AuthenticationManager       :: responsable de procesar solicitudes de autenticación.
-                                       y permite acceder a la configuración de autenticación.
-     */
     @Bean
     public AuthenticationManager authenticationManager() throws Exception {
         return authenticationConfiguration.getAuthenticationManager(); // obtiene el AuthenticationManager

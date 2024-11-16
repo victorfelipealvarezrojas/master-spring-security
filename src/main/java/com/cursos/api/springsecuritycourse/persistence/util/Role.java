@@ -3,7 +3,7 @@ package com.cursos.api.springsecuritycourse.persistence.util;
 import java.util.List;
 
 public enum Role {
-    ROLE_ADMINISTRATOR(List.of(
+    ADMINISTRATOR(List.of(
             // permisos sobre productos
             RolePermission.READ_ALL_PRODUCTS,
             RolePermission.READ_ONE_PRODUCTS,
@@ -19,7 +19,7 @@ public enum Role {
             // permisos sobre mi perfil
             RolePermission.READ_MY_PROFILE
     )),
-    ROLE_ASSISTANT_ADMINISTRATOR(List.of(
+    ASSISTANT_ADMINISTRATOR(List.of(
             // permisos sobre productos
             RolePermission.READ_ALL_PRODUCTS,
             RolePermission.READ_ONE_PRODUCTS,
@@ -31,7 +31,7 @@ public enum Role {
             // permisos sobre mi perfil
             RolePermission.READ_MY_PROFILE
     )),
-    ROLE_CUSTOMER(List.of(
+    CUSTOMER(List.of(
             // permisos sobre mi perfil
             RolePermission.READ_MY_PROFILE
     ));

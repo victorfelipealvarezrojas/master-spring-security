@@ -7,6 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
@@ -34,10 +35,17 @@ public class User implements UserDetails {
         if (role == null) return null;
         if (role.getPermissions() == null) return null;
 
-        return role.getPermissions().stream()
-                .map(permission -> permission.name())
-                .map(SimpleGrantedAuthority::new) // convierto a objeto de tipo GrantedAuthority
-                .collect(Collectors.toList());
+        List<SimpleGrantedAuthority> authorities = role.getPermissions().stream()
+                .map(Enum::name) // convierto a string el nombre del permiso (Enum)
+                .map(SimpleGrantedAuthority::new) // convierto los permisos a una lista de tipo GrantedAuthority
+                .collect(Collectors.toList()); /// retorna una lista mutable de los elementos de la secuencia dada  .toList();  ES (inmutable)
+
+        // Esto lo hago para que el rol también sea considerado como un permiso
+        // ademas a los roles se les agrega un prefijo "ROLE_" para que spring los reconozca como roles
+        // y no como permisos, el siguente add lo qeu hace es agregar el rol como un permiso
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
+
+        return authorities;
     }
 
     @Override
@@ -102,3 +110,10 @@ public class User implements UserDetails {
         return true;
     }
 }
+
+/***********************************************************
+ * Spring Security
+ * FUNCIONA EN BASE A PERMISOS Y NO TIENE NINGUN METODO QUE ENTREGUE
+ * EL ROL DE UN USUARIO, POR LO QUE DEBEMOS AGREGAR EL ROL COMO UN PERMISO (AUTHORITY)
+ * Y PARA DIFERENCIARLO DE LOS PERMISOS, DEBEMOS AGREGAR UN PREFIJO "ROLE_" Y AHI ESTA EL TRUCO
+ * ************************************************************/
