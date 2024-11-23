@@ -1,5 +1,8 @@
 package com.cursos.api.springsecuritycourse.dto;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -10,6 +13,7 @@ public class ApiError implements Serializable {
     private String message;
     private int httpCode;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private LocalDateTime time;
 
     public String getBackedMessage() {

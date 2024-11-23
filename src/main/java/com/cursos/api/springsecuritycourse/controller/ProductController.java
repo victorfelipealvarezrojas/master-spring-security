@@ -21,7 +21,7 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @PreAuthorize("hasAuthority('READ_ALL_PRODUCTS')")
+    @PreAuthorize("hasAuthority('READ_ALL_PRODUCTS')") //se configura en HttpSecurityConfig
     @GetMapping
     public ResponseEntity<Page<Product>> findAll(Pageable pageable){
         Page<Product> productsPage = productService.findAll(pageable);

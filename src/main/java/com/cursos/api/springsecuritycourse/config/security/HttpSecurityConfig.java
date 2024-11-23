@@ -1,11 +1,14 @@
 package com.cursos.api.springsecuritycourse.config.security;
 
 import com.cursos.api.springsecuritycourse.config.security.filter.JwtAuthenticationFilter;
+import com.cursos.api.springsecuritycourse.config.security.handler.CustomAccessDeniedHandler;
+import com.cursos.api.springsecuritycourse.config.security.handler.CustomAuthenticationEntryPoint;
 import com.cursos.api.springsecuritycourse.persistence.util.Role;
 import com.cursos.api.springsecuritycourse.persistence.util.RolePermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Description;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +25,7 @@ import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true) // habilita la seguridad a nivel de metodos y me permite usar las anotaciones @PreAuthorize y @PostAuthorize
+//@EnableMethodSecurity(prePostEnabled = true) // habilita la seguridad a nivel de metodos y me permite usar las anotaciones @PreAuthorize y @PostAuthorize
 public class HttpSecurityConfig {
 
     @Autowired
@@ -31,17 +34,27 @@ public class HttpSecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Autowired
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
+
+    @Autowired
+    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(daoAuthenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                //.authorizeHttpRequests(HttpSecurityConfig::buildRequestMatchersV2).build();
+                .authorizeHttpRequests(HttpSecurityConfig::buildRequestMatchers)
+                .exceptionHandling(ex -> {
+                    ex.authenticationEntryPoint(customAuthenticationEntryPoint);
+                    ex.accessDeniedHandler(customAccessDeniedHandler);
+                })
                 .build();
     }
 
-    @Deprecated(since = "1.0.0", forRemoval = true)
+    @Description("Configuración de autorizaciones por roles y authorities , basada en coincidencias de rutas HTTP")
     private static void buildRequestMatchers(
             AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authReqConfig) {
         /*Autorizacion Por Role (SE MANEJA PREFIJO _ROLE) de productos por solicitudes HTTP*/
