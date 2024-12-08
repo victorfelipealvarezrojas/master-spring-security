@@ -1,6 +1,5 @@
-package com.cursos.api.springsecuritycourse.persistence.entity;
+package com.cursos.api.springsecuritycourse.persistence.entity.security;
 
-import com.cursos.api.springsecuritycourse.persistence.util.Role;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,26 +23,21 @@ public class User implements UserDetails {
 
     private String password;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "role_id")
     private Role role;
 
-    // permisos sobre mi rol
-    // convierto mis enum de permisos a objeto de tipo GrantedAuthority
-    // GrantedAuthority:  Representa la autorización o rol que se otorga al usuario autenticado.
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (role == null) return null;
         if (role.getPermissions() == null) return null;
 
         List<SimpleGrantedAuthority> authorities = role.getPermissions().stream()
-                .map(Enum::name) // convierto a string el nombre del permiso (Enum)
-                .map(SimpleGrantedAuthority::new) // convierto los permisos a una lista de tipo GrantedAuthority
-                .collect(Collectors.toList()); /// retorna una lista mutable de los elementos de la secuencia dada  .toList();  ES (inmutable)
+                .map(each -> each.getOperation().getName())
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
 
-        // Esto lo hago para que el rol también sea considerado como un permiso
-        // ademas a los roles se les agrega un prefijo "ROLE_" para que spring los reconozca como roles
-        // y no como permisos, el siguente add lo qeu hace es agregar el rol como un permiso
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.role.getName()));
 
         return authorities;
     }
@@ -110,10 +104,3 @@ public class User implements UserDetails {
         return true;
     }
 }
-
-/***********************************************************
- * Spring Security
- * FUNCIONA EN BASE A PERMISOS Y NO TIENE NINGUN METODO QUE ENTREGUE
- * EL ROL DE UN USUARIO, POR LO QUE DEBEMOS AGREGAR EL ROL COMO UN PERMISO (AUTHORITY)
- * Y PARA DIFERENCIARLO DE LOS PERMISOS, DEBEMOS AGREGAR UN PREFIJO "ROLE_" Y AHI ESTA EL TRUCO
- * ************************************************************/

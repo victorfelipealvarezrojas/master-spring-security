@@ -2,9 +2,11 @@ package com.cursos.api.springsecuritycourse.service.impl;
 
 import com.cursos.api.springsecuritycourse.dto.SaveUser;
 import com.cursos.api.springsecuritycourse.exception.InvalidPasswordException;
-import com.cursos.api.springsecuritycourse.persistence.entity.User;
-import com.cursos.api.springsecuritycourse.persistence.repository.UserRepository;
-import com.cursos.api.springsecuritycourse.persistence.util.Role;
+import com.cursos.api.springsecuritycourse.exception.ObjectNotFoundException;
+import com.cursos.api.springsecuritycourse.persistence.entity.security.Role;
+import com.cursos.api.springsecuritycourse.persistence.entity.security.User;
+import com.cursos.api.springsecuritycourse.persistence.repository.security.UserRepository;
+import com.cursos.api.springsecuritycourse.service.RoleService;
 import com.cursos.api.springsecuritycourse.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,13 +33,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    /**
-     * extends to UserService
-     * Registra un nuevo usuario cliente en el sistema.
-     *
-     * @param newUser El DTO que contiene la información del nuevo usuario.
-     * @return La entidad User creada.
-     */
+    @Autowired
+    private RoleService roleService;
+
     @Override
     public User registerCustomer(SaveUser newUser) {
         validatePassword(newUser);
@@ -45,7 +43,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setUsername(newUser.getUsername());
         user.setName(newUser.getName());
         user.setPassword(this.passwordEncoder.encode(newUser.getPassword()));
-        user.setRole(Role.CUSTOMER);
+
+        Role defaultRole = roleService.findDefaultRole()
+                .orElseThrow(() -> new ObjectNotFoundException("No se encontró el rol por defecto"));
+
+        user.setRole(defaultRole);
         return this.userRepository.save(user);
     }
 
@@ -61,12 +63,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return this.userRepository.findByUsername(username);
     }
 
-    /**
-     * Valida la contraseña proporcionada durante el registro del usuario.
-     *
-     * @param newUser El DTO que contiene la información de registro del usuario.
-     * @throws InvalidPasswordException Si la contraseña está vacía o no coincide con la contraseña repetida.
-     */
     private void validatePassword(SaveUser newUser) {
         if (!StringUtils.hasText(newUser.getPassword())
                 || !StringUtils.hasText(newUser.getRepeatedPassword())) {
@@ -78,18 +74,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
     }
 
-    /**
-     * extends to UserDetailsService
-     * Carga los detalles del usuario para propósitos de autenticación.
-     * Este método es utilizado por Spring Security para la autenticación de usuarios.
-     *
-     * @param username El nombre de usuario del usuario a cargar.
-     * @return Objeto UserDetails conteniendo la información de autenticación del usuario.
-     * @throws UsernameNotFoundException Si no se encuentra ningún usuario con el nombre de usuario dado.
-     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el nombre de usuario: " + username));
+                .orElseThrow(
+                        () -> new UsernameNotFoundException("Usuario no encontrado con el nombre de usuario: " + username));
     }
 }
